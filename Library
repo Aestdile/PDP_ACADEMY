@@ -1,12 +1,12 @@
 
-// KutubxonaTizimi.cs
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace KutubxonaTizimi
 {
-    // Kitob klassi
+    
     public class Kitob
     {
         public int Id { get; set; }
@@ -29,7 +29,7 @@ namespace KutubxonaTizimi
         }
     }
 
-    // Kitobxon klassi
+   
     public class Kitobxon
     {
         public int Id { get; set; }
@@ -54,7 +54,6 @@ namespace KutubxonaTizimi
         }
     }
 
-    // Asosiy kutubxona klassi
     public class Kutubxona
     {
         private List<Kitob> Kitoblar;
@@ -283,7 +282,6 @@ namespace KutubxonaTizimi
         }
     }
 
-    // Asosiy dastur
     class Program
     {
         static void Main(string[] args)
