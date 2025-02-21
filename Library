@@ -1,0 +1,295 @@
+
+// KutubxonaTizimi.cs
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace KutubxonaTizimi
+{
+    // Kitob klassi
+    public class Kitob
+    {
+        public int Id { get; set; }
+        public string Nomi { get; set; }
+        public string Janr { get; set; }
+        public string Avtor { get; set; }
+        public int JamiMiqdori { get; set; }
+        public int QolganMiqdori { get; set; }
+        public List<string> OquvchilarRoyxati { get; set; }
+
+        public Kitob(int id, string nomi, string janr, string avtor, int jamiMiqdori)
+        {
+            Id = id;
+            Nomi = nomi;
+            Janr = janr;
+            Avtor = avtor;
+            JamiMiqdori = jamiMiqdori;
+            QolganMiqdori = jamiMiqdori;
+            OquvchilarRoyxati = new List<string>();
+        }
+    }
+
+    // Kitobxon klassi
+    public class Kitobxon
+    {
+        public int Id { get; set; }
+        public string Login { get; set; }
+        public string Parol { get; set; }
+        public string Ism { get; set; }
+        public string Familiya { get; set; }
+        public int Yosh { get; set; }
+        public int OlinganKitoblarSoni { get; set; }
+        public List<Kitob> OlinganKitoblar { get; set; }
+
+        public Kitobxon(int id, string login, string parol, string ism, string familiya, int yosh)
+        {
+            Id = id;
+            Login = login;
+            Parol = parol;
+            Ism = ism;
+            Familiya = familiya;
+            Yosh = yosh;
+            OlinganKitoblarSoni = 0;
+            OlinganKitoblar = new List<Kitob>();
+        }
+    }
+
+    // Asosiy kutubxona klassi
+    public class Kutubxona
+    {
+        private List<Kitob> Kitoblar;
+        private List<Kitobxon> Kitobxonlar;
+        private Kitobxon JoriyKitobxon;
+
+        public Kutubxona()
+        {
+            Kitoblar = new List<Kitob>
+            {
+                new Kitob(1, "O'tkan kunlar", "Roman", "Abdulla Qodiriy", 5),
+                new Kitob(2, "Kecha va Kunduz", "Roman", "Cho'lpon", 3),
+                new Kitob(3, "Sariq Devni Minib", "Fantastika", "Xudoyberdi To'xtaboyev", 4)
+            };
+
+            Kitobxonlar = new List<Kitobxon>();
+        }
+
+        public void Ishga_Tushirish()
+        {
+            while (true)
+            {
+                Console.WriteLine("\nKutubxona tizimiga xush kelibsiz!");
+                Console.WriteLine("1. Kirish");
+                Console.WriteLine("2. Ro'yxatdan o'tish");
+                Console.WriteLine("3. Chiqish");
+                
+                string tanlov = Console.ReadLine();
+
+                switch (tanlov)
+                {
+                    case "1":
+                        Kirish();
+                        break;
+                    case "2":
+                        RoyxatdanOtish();
+                        break;
+                    case "3":
+                        return;
+                    default:
+                        Console.WriteLine("Noto'g'ri tanlov!");
+                        break;
+                }
+            }
+        }
+
+        private void Kirish()
+        {
+            Console.Write("Login: ");
+            string login = Console.ReadLine();
+            Console.Write("Parol: ");
+            string parol = Console.ReadLine();
+
+            JoriyKitobxon = Kitobxonlar.FirstOrDefault(k => k.Login == login && k.Parol == parol);
+
+            if (JoriyKitobxon != null)
+            {
+                Console.WriteLine($"\nXush kelibsiz, {JoriyKitobxon.Ism}!");
+                AsosiyMenu();
+            }
+            else
+            {
+                Console.WriteLine("Login yoki parol noto'g'ri!");
+            }
+        }
+
+        private void RoyxatdanOtish()
+        {
+            Console.Write("Login: ");
+            string login = Console.ReadLine();
+            
+            if (Kitobxonlar.Any(k => k.Login == login))
+            {
+                Console.WriteLine("Bu login band!");
+                return;
+            }
+
+            Console.Write("Parol: ");
+            string parol = Console.ReadLine();
+            Console.Write("Ism: ");
+            string ism = Console.ReadLine();
+            Console.Write("Familiya: ");
+            string familiya = Console.ReadLine();
+            Console.Write("Yosh: ");
+            int yosh = int.Parse(Console.ReadLine());
+
+            int yangiId = Kitobxonlar.Count + 1;
+            Kitobxonlar.Add(new Kitobxon(yangiId, login, parol, ism, familiya, yosh));
+            Console.WriteLine("Muvaffaqiyatli ro'yxatdan o'tdingiz!");
+        }
+
+        private void AsosiyMenu()
+        {
+            while (true)
+            {
+                Console.WriteLine("\nMENU:");
+                Console.WriteLine("1. Kitoblar ro'yxatini ko'rish");
+                Console.WriteLine("2. Kitob haqida ma'lumot");
+                Console.WriteLine("3. Kitob olish");
+                Console.WriteLine("4. Kitob qaytarish");
+                Console.WriteLine("5. Chiqish");
+
+                string tanlov = Console.ReadLine();
+
+                switch (tanlov)
+                {
+                    case "1":
+                        KitoblarRoyxatiniKorish();
+                        break;
+                    case "2":
+                        KitobMalumotlariniKorish();
+                        break;
+                    case "3":
+                        KitobOlish();
+                        break;
+                    case "4":
+                        KitobQaytarish();
+                        break;
+                    case "5":
+                        JoriyKitobxon = null;
+                        return;
+                    default:
+                        Console.WriteLine("Noto'g'ri tanlov!");
+                        break;
+                }
+            }
+        }
+
+        private void KitoblarRoyxatiniKorish()
+        {
+            Console.WriteLine("\nKitoblar ro'yxati:");
+            foreach (var kitob in Kitoblar)
+            {
+                Console.WriteLine($"{kitob.Id}. {kitob.Nomi} - {kitob.Avtor} ({kitob.QolganMiqdori} ta bor)");
+            }
+        }
+
+        private void KitobMalumotlariniKorish()
+        {
+            KitoblarRoyxatiniKorish();
+            Console.Write("\nKitob raqamini kiriting: ");
+            int kitobId = int.Parse(Console.ReadLine());
+
+            var kitob = Kitoblar.FirstOrDefault(k => k.Id == kitobId);
+            if (kitob != null)
+            {
+                Console.WriteLine($"\nKitob haqida ma'lumot:");
+                Console.WriteLine($"Nomi: {kitob.Nomi}");
+                Console.WriteLine($"Janr: {kitob.Janr}");
+                Console.WriteLine($"Avtori: {kitob.Avtor}");
+                Console.WriteLine($"Jami miqdori: {kitob.JamiMiqdori}");
+                Console.WriteLine($"Qolgan miqdori: {kitob.QolganMiqdori}");
+                Console.WriteLine($"O'qiyotganlar soni: {kitob.OquvchilarRoyxati.Count}");
+            }
+            else
+            {
+                Console.WriteLine("Kitob topilmadi!");
+            }
+        }
+
+        private void KitobOlish()
+        {
+            KitoblarRoyxatiniKorish();
+            Console.Write("\nKitob raqamini kiriting: ");
+            int kitobId = int.Parse(Console.ReadLine());
+
+            var kitob = Kitoblar.FirstOrDefault(k => k.Id == kitobId);
+            if (kitob != null)
+            {
+                if (kitob.QolganMiqdori > 0)
+                {
+                    if (!JoriyKitobxon.OlinganKitoblar.Contains(kitob))
+                    {
+                        kitob.QolganMiqdori--;
+                        kitob.OquvchilarRoyxati.Add($"{JoriyKitobxon.Ism} {JoriyKitobxon.Familiya}");
+                        JoriyKitobxon.OlinganKitoblar.Add(kitob);
+                        JoriyKitobxon.OlinganKitoblarSoni++;
+                        Console.WriteLine("Kitob muvaffaqiyatli olindi!");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Siz bu kitobni allaqachon olgansiz!");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Kechirasiz, kitob qolmagan!");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Kitob topilmadi!");
+            }
+        }
+
+        private void KitobQaytarish()
+        {
+            if (JoriyKitobxon.OlinganKitoblar.Count == 0)
+            {
+                Console.WriteLine("Sizda hech qanday kitob yo'q!");
+                return;
+            }
+
+            Console.WriteLine("\nSizdagi kitoblar:");
+            for (int i = 0; i < JoriyKitobxon.OlinganKitoblar.Count; i++)
+            {
+                Console.WriteLine($"{i + 1}. {JoriyKitobxon.OlinganKitoblar[i].Nomi}");
+            }
+
+            Console.Write("\nQaytarmoqchi bo'lgan kitob raqamini kiriting: ");
+            int tanlov = int.Parse(Console.ReadLine());
+
+            if (tanlov > 0 && tanlov <= JoriyKitobxon.OlinganKitoblar.Count)
+            {
+                var kitob = JoriyKitobxon.OlinganKitoblar[tanlov - 1];
+                kitob.QolganMiqdori++;
+                kitob.OquvchilarRoyxati.Remove($"{JoriyKitobxon.Ism} {JoriyKitobxon.Familiya}");
+                JoriyKitobxon.OlinganKitoblar.RemoveAt(tanlov - 1);
+                JoriyKitobxon.OlinganKitoblarSoni--;
+                Console.WriteLine("Kitob muvaffaqiyatli qaytarildi!");
+            }
+            else
+            {
+                Console.WriteLine("Noto'g'ri raqam kiritildi!");
+            }
+        }
+    }
+
+    // Asosiy dastur
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Kutubxona kutubxona = new Kutubxona();
+            kutubxona.Ishga_Tushirish();
+        }
+    }
+}
